@@ -1,0 +1,62 @@
+﻿@model List<SharedFileViewModel>
+@{
+    ViewData["Title"] = "Files";
+}
+
+<div class="mb-3">
+    <a id="add-file-button" class="btn btn-primary cursor-pointer">Add File</a>
+    <form id="file-add-form">
+        <label>File Name</label>
+        <input id="file-name-input" />
+        <label>File Size</label>
+        <input id="file-size-input"/>
+        <a id="submit-button" class="btn btn-outline-secondary">Submit</a>
+    </form>
+</div>
+
+<div class="custom-scrollbar">
+    @if (!Model.Any())
+    {
+        <table>
+            <tr>
+                <td colspan="5" class="text-center">No files found.</td>
+            </tr>
+        </table>
+    }
+    else
+    {
+        <table class="table table-hover thead-dark text-left">
+            <thead>
+                <tr>
+                    <th>File ID</th>
+                    <th>File name</th>
+                    <th>File size</th>
+                    <th>Upload date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var file in Model)
+                {
+                    <tr data-file-id="@file.Id">
+                        <td>@file.Id</td>
+                        <td>@file.FileName</td>
+                        <td>@file.FileSize</td>
+                        <td>@file.UploadDate</td>
+                        <td>
+                            <a class="btn btn-success cursor-pointer" id="edit-file-@file.Id">Edit</a>
+                            <a class="btn btn-danger cursor-pointer" asp-action="Delete" asp-route-id="@file.Id">Delete</a>
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+@section scripts{
+    <script src="~/js/FileHandler.js"></script>
+    <script>
+        FileHandler.Init();
+    </script>
+}

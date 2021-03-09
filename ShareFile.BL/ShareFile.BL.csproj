@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShareFile.DAL\ShareFile.DAL.csproj" />
+    <ProjectReference Include="..\ShareFile.DTO\ShareFile.TL.csproj" />
+  </ItemGroup>
+
+</Project>
