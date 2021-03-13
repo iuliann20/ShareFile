@@ -8,7 +8,11 @@
 
     function HideAndShowAddFileForm() {
         $("#add-file-button").click(function () {
-            $("#file-add-form").toggle();
+            $("#file-add-form").toggle("slow");
+            $("#show-add-file").toggle();
+            $("#hide-add-file").toggle();
+            
+
         })
     }
 

@@ -10,5 +10,6 @@ namespace ShareFile.DAL.Repository.Interfaces
         void UpdateFile(SharedFileDTO sharedFileDTO);
         List<SharedFileDTO> GetAllFiles();
         SharedFileDTO GetFileById(int id);
+        bool CheckIfFileExistInDbByName(string name);
     }
 }

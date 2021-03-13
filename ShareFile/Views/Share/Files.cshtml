@@ -4,13 +4,13 @@
 }
 
 <div class="mb-3">
-    <a id="add-file-button" class="btn btn-primary cursor-pointer">Add File</a>
-    <form id="file-add-form">
-        <label>File Name</label>
-        <input id="file-name-input" />
-        <label>File Size</label>
-        <input id="file-size-input"/>
-        <a id="submit-button" class="btn btn-outline-secondary">Submit</a>
+    <form id="file-add-form" asp-controller="Share" asp-action="UploadFiles" method="post" enctype="multipart/form-data">
+        <div class="container">
+            <div class="form-group">
+                <input class="form-control-file" type="file" name="files" multiple />
+                <button class="float-right btn btn-primary" type="submit">Upload File</button>
+            </div>
+        </div>
     </form>
 </div>
 
@@ -44,7 +44,8 @@
                         <td>@file.FileSize</td>
                         <td>@file.UploadDate</td>
                         <td>
-                            <a class="btn btn-success cursor-pointer" id="edit-file-@file.Id">Edit</a>
+                            <a class="btn btn-primary cursor-pointer" asp-action="Download" asp-route-id="@file.Id">Download</a>
+                            <a class="btn btn-success cursor-pointer" id="edit-file-@file.Id" asp-action="EditFile" asp-route-id="@file.Id" >Edit</a>
                             <a class="btn btn-danger cursor-pointer" asp-action="Delete" asp-route-id="@file.Id">Delete</a>
                         </td>
 
@@ -57,6 +58,6 @@
 @section scripts{
     <script src="~/js/FileHandler.js"></script>
     <script>
-        FileHandler.Init();
+        
     </script>
 }

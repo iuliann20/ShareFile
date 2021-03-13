@@ -9,5 +9,9 @@ namespace ShareFile.Helpers.Interfaces
         List<SharedFileViewModel> BuildViewModel(List<SharedFileDTO> sharedFileDTOs);
         SharedFileViewModel BuildViewModel(SharedFileDTO sharedFileDTO);
         SharedFileDTO BuildDTO(SharedFileViewModel sharedFileViewModel);
+
+        string FormatSize(long bytes);
     }
+
+
 }

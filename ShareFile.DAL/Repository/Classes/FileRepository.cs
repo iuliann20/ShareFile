@@ -42,6 +42,9 @@ namespace ShareFile.DAL.Repository.Classes
             if (fileFromDb != null)
             {
                 fileFromDb.FileName = !string.IsNullOrEmpty(sharedFileDTO.FileName) ? sharedFileDTO.FileName : fileFromDb.FileName;
+                fileFromDb.FileSize = !string.IsNullOrEmpty(sharedFileDTO.FileSize) ? sharedFileDTO.FileSize : fileFromDb.FileSize;
+                fileFromDb.UploadDate = sharedFileDTO.UploadDate != null ? sharedFileDTO.UploadDate : fileFromDb.UploadDate;
+
                 _shareFileDbContext.SaveChanges();
             }
         }
@@ -65,12 +68,18 @@ namespace ShareFile.DAL.Repository.Classes
             {
                 return new SharedFileDTO
                 {
+                    Id = fileFromDb.Id,
                     FileName = fileFromDb.FileName,
                     FileSize = fileFromDb.FileSize,
                     UploadDate = fileFromDb.UploadDate
                 };
             }
             return null;
+        }
+        public bool CheckIfFileExistInDbByName(string name)
+        {
+            SharedFile fileFromDb = _shareFileDbContext.Files.FirstOrDefault(x => x.FileName == name);
+            return fileFromDb != null;
         }
     }
 }

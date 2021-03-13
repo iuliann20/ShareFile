@@ -1,57 +1,116 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MimeKit;
 using ShareFile.BL.Logic.Interfaces;
 using ShareFile.Helpers.Interfaces;
 using ShareFile.Models;
 using ShareFile.TL.DTO;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace ShareFile.Controllers
 {
     public class ShareController : Controller
     {
+        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IFileLogic _fileLogic;
         private readonly IShareControllerHelper _shareControllerHelper;
-        public ShareController(IFileLogic fileLogic, IShareControllerHelper shareControllerHelper)
+        private readonly string _uploads;
+
+        public ShareController(IFileLogic fileLogic, IShareControllerHelper shareControllerHelper, IWebHostEnvironment hostingEnvironment)
         {
             _fileLogic = fileLogic;
             _shareControllerHelper = shareControllerHelper;
+            _hostingEnvironment = hostingEnvironment;
+            _uploads = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads");
         }
 
         public IActionResult Index()
         {
-            _fileLogic.AddFile(new SharedFileDTO { FileName = "Iulian", FileSize = "23Mb", UploadDate = DateTime.Now });
-
             return View();
         }
         public IActionResult Files()
         {
-            System.Collections.Generic.List<SharedFileViewModel> fileViewModels = _shareControllerHelper.BuildViewModel(_fileLogic.GetAllFiles());
+            List<SharedFileViewModel> fileViewModels = _shareControllerHelper.BuildViewModel(_fileLogic.GetAllFiles());
             return View(fileViewModels);
         }
         public IActionResult Delete(int id)
         {
+
+            _fileLogic.DeleteFileOnDisk(id, _uploads);
             _fileLogic.RemoveFile(id);
             return RedirectToAction("Files");
         }
 
         [HttpPost]
-        public IActionResult AddFile([FromBody] SharedFileViewModel sharedFileViewModel)
+        public IActionResult UploadFiles(List<IFormFile> files)
         {
-            if (string.IsNullOrEmpty(sharedFileViewModel.FileName) && string.IsNullOrEmpty(sharedFileViewModel.FileSize))
+            if (!files.Any())
             {
                 return RedirectToAction("Files");
             }
+            foreach (IFormFile file in files)
+            {
 
-            sharedFileViewModel.UploadDate = DateTime.Now;
-            _fileLogic.AddFile(_shareControllerHelper.BuildDTO(sharedFileViewModel));
+                string newFileName = _fileLogic.AddFile(new SharedFileDTO
+                {
+
+                    FileName = file.FileName,
+                    FileSize = _shareControllerHelper.FormatSize(file.Length),
+                    UploadDate = DateTime.Now
+
+                });
+
+
+                _fileLogic.UploadFileOnDiskAsync(_uploads, file, newFileName);
+            }
             return RedirectToAction("Files");
         }
+        public IActionResult Download(int id)
+        {
+
+
+            string filePath = _fileLogic.DownloadFileAsync(id, _uploads);
+            if (filePath == null) return NotFound();
+
+            return PhysicalFile(filePath, MimeTypes.GetMimeType(filePath), Path.GetFileName(filePath));
+        }
+        [HttpGet]
+        public IActionResult EditFile(int id)
+        {
+            SharedFileViewModel model = _shareControllerHelper.BuildViewModel(_fileLogic.GetFileById(id));
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult EditFile(int fileId, IFormFile file)
+        {
+            SharedFileDTO fileById = _fileLogic.GetFileById(fileId);
+            bool hasNameChanged = fileById.FileName.Equals(file.FileName);
+            string newFileName = _fileLogic.UpdateFile(new SharedFileDTO
+            {
+                Id = fileId,
+                FileName = file.FileName,
+                FileSize = _shareControllerHelper.FormatSize(file.Length),
+                UploadDate = DateTime.Now
+            }, !hasNameChanged);
+
+            _fileLogic.ReplaceFileOnDisk(file, _uploads, !hasNameChanged, newFileName);
+            return RedirectToAction("Files");
+
+        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
+
