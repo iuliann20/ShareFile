@@ -76,3 +76,33 @@ body {
 .cursor-pointer {
     cursor: pointer;
 }
+
+nav #login {
+    border-right: 1px solid #ddd;
+    box-shadow: 1px 0 0 #fff;
+}
+
+
+
+.login-li-button {
+    margin-left: 76%;
+}
+
+nav #login-content {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 65.5%;
+    right: 0;
+    z-index: 999;
+    background: #fff;
+    background-image: linear-gradient(top, #fff, #eee);
+    padding: 15px;
+    box-shadow: 0 2px 2px -1px rgba(0,0,0,.9);
+    border-radius: 3px 0 3px 3px;
+}
+
+nav li #login-content {
+    right: 0;
+    width: 250px;
+}
