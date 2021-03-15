@@ -17,6 +17,6 @@ namespace ShareFile.BL.Logic.Interfaces
         void DeleteFileOnDisk(int id, string uploads);
         string DownloadFileAsync(int id, string uploads);
         void ReplaceFileOnDisk(IFormFile file, string uploads, bool hasNameChanged, string oldFileName);
-        Response AddUser(ShareFileUserDTO registerDTO, string rePassword);
+        
     }
 }
