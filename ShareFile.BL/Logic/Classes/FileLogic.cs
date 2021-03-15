@@ -2,6 +2,7 @@
 using ShareFile.BL.Logic.Interfaces;
 using ShareFile.DAL.Repository.Interfaces;
 using ShareFile.TL.DTO;
+using ShareFile.TL.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -102,6 +103,7 @@ namespace ShareFile.BL.Logic.Classes
             UploadFileOnDiskAsync(uploads, file, fileName);
 
         }
+        
 
         private string IncrementFileName(string fileName)
         {
@@ -115,6 +117,7 @@ namespace ShareFile.BL.Logic.Classes
             }
             return fileName;
         }
+
 
     }
 }

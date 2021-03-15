@@ -81,5 +81,8 @@ namespace ShareFile.DAL.Repository.Classes
             SharedFile fileFromDb = _shareFileDbContext.Files.FirstOrDefault(x => x.FileName == name);
             return fileFromDb != null;
         }
+
+        
+
     }
 }

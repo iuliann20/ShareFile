@@ -29,10 +29,18 @@ namespace ShareFile
 
             string connectionString = "Server=localhost;Database=ShareFileDb;Trusted_Connection=True;MultipleActiveResultSets=true";
             services.AddDbContext<ShareFileDbContext>(options => options.UseSqlServer(connectionString));
-            services.AddTransient<IFileLogic, FileLogic>();
+
             services.AddTransient<IFileRepository, FileRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddTransient<IFileLogic, FileLogic>();
+            services.AddTransient<IUserLogic, UserLogic>();
+
             services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
+            services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
+
             services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

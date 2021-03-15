@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ShareFile.DAL.Entities
 {
@@ -10,5 +11,8 @@ namespace ShareFile.DAL.Entities
         public string FileName { get; set; }
         public string FileSize { get; set; }
         public DateTime? UploadDate { get; set; }
+        [ForeignKey("SharedFileUser")]
+        public int UserId { get; set; }
+        public SharedFileUser SharedFileUser { get; set; }
     }
 }

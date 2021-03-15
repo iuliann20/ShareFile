@@ -10,5 +10,6 @@ namespace ShareFile.DAL
         }
 
         public DbSet<SharedFile> Files { get; set; }
+        public DbSet<SharedFileUser> Users { get; set; }
     }
 }
