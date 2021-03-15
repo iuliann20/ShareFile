@@ -37,7 +37,7 @@ namespace ShareFile
             services.AddTransient<IUserLogic, UserLogic>();
 
             services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
-            services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
+            services.AddTransient<IAccountControllerHelper, AccountControllerHelper>();
 
             services.AddControllersWithViews();
 
