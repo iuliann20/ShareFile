@@ -1,15 +1,11 @@
 ﻿using ShareFile.DAL.Entities;
 using ShareFile.DAL.Repository.Interfaces;
 using ShareFile.TL.DTO;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShareFile.DAL.Repository.Classes
 {
-    public class UserRepository: IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly ShareFileDbContext _shareFileDbContext;
         public UserRepository(ShareFileDbContext shareFileDbContext)
@@ -31,7 +27,7 @@ namespace ShareFile.DAL.Repository.Classes
         }
         public ShareFileUserDTO GetUserByEmail(string email)
         {
-            var userFromDb = _shareFileDbContext.Users.FirstOrDefault(x => x.Email == email);
+            SharedFileUser userFromDb = _shareFileDbContext.Users.FirstOrDefault(x => x.Email == email);
             if (userFromDb == null)
             {
                 return null;
@@ -49,7 +45,7 @@ namespace ShareFile.DAL.Repository.Classes
         }
         public ShareFileUserDTO GetUserById(int id)
         {
-            var userFromDb = _shareFileDbContext.Users.FirstOrDefault(x => x.UserId == id);
+            SharedFileUser userFromDb = _shareFileDbContext.Users.FirstOrDefault(x => x.UserId == id);
             if (userFromDb == null)
             {
                 return null;

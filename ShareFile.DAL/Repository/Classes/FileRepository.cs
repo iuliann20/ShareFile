@@ -82,7 +82,7 @@ namespace ShareFile.DAL.Repository.Classes
             return fileFromDb != null;
         }
 
-        
+
 
     }
 }

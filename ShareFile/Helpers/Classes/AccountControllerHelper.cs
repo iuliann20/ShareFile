@@ -1,10 +1,6 @@
 ﻿using ShareFile.Helpers.Interfaces;
 using ShareFile.Models;
 using ShareFile.TL.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ShareFile.Helpers.Classes
 {
@@ -19,7 +15,9 @@ namespace ShareFile.Helpers.Classes
                 BirthDay = registerViewModel.BirthDay,
                 PhoneNumber = registerViewModel.PhoneNumber,
                 UserId = registerViewModel.UserId,
-                Password = registerViewModel.Password
+                Password = registerViewModel.Password,
+                Email = registerViewModel.Email
+
             };
         }
     }

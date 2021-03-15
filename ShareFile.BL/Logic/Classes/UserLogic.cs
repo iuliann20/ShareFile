@@ -2,15 +2,10 @@
 using ShareFile.DAL.Repository.Interfaces;
 using ShareFile.TL.DTO;
 using ShareFile.TL.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShareFile.BL.Logic.Classes
 {
-    public class UserLogic: IUserLogic
+    public class UserLogic : IUserLogic
     {
         private readonly IUserRepository _userRepository;
         public UserLogic(IUserRepository userRepository)

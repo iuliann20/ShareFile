@@ -2,10 +2,6 @@
 using ShareFile.BL.Logic.Interfaces;
 using ShareFile.Helpers.Interfaces;
 using ShareFile.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ShareFile.Controllers
 {
@@ -28,7 +24,7 @@ namespace ShareFile.Controllers
         {
             if (registerViewModel != null)
             {
-                var message = _userLogic.AddUser(_accountControllerHelper.BuildDTO(registerViewModel), registerViewModel.RePassword);
+                TL.Helpers.Response message = _userLogic.AddUser(_accountControllerHelper.BuildDTO(registerViewModel), registerViewModel.RePassword);
             }
             return RedirectToAction("Index", "Share");
         }
