@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ShareFile.DAL;
 
 namespace ShareFile.DAL.Migrations
 {
     [DbContext(typeof(ShareFileDbContext))]
-    partial class ShareFileDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210316130346_removeUserIdForeighKey")]
+    partial class removeUserIdForeighKey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,15 +87,7 @@ namespace ShareFile.DAL.Migrations
                     b.Property<string>("AccessToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("TokenId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("AccessTokens");
                 });
@@ -109,21 +103,8 @@ namespace ShareFile.DAL.Migrations
                     b.Navigation("SharedFileUser");
                 });
 
-            modelBuilder.Entity("ShareFile.DAL.Entities.Token", b =>
-                {
-                    b.HasOne("ShareFile.DAL.Entities.SharedFileUser", "SharedFileUser")
-                        .WithMany("AccessTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("SharedFileUser");
-                });
-
             modelBuilder.Entity("ShareFile.DAL.Entities.SharedFileUser", b =>
                 {
-                    b.Navigation("AccessTokens");
-
                     b.Navigation("SharedFiles");
                 });
 #pragma warning restore 612, 618

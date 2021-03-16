@@ -1,0 +1,96 @@
+﻿using Microsoft.AspNetCore.Http;
+using ShareFile.BL.Logic.Interfaces;
+using ShareFile.DAL.Repository.Interfaces;
+using ShareFile.TL.DTO;
+using System;
+
+namespace ShareFile.BL.Logic.Classes
+{
+    public class AccountLogic : IAccountLogic
+    {
+        private readonly IUserLogic _userLogic;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ITokenRepository _tokenRepository;
+        public AccountLogic(IHttpContextAccessor httpContextAccessor, IUserLogic userLogic, ITokenRepository tokenRepository)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _userLogic = userLogic;
+            _tokenRepository = tokenRepository;
+        }
+
+        public bool IsSignedIn()
+        {
+            string value = _httpContextAccessor.HttpContext.Request.Cookies["AuthenticationToken"];
+            if (!string.IsNullOrEmpty(value))
+            {
+                TokenDTO tokenDTO = _tokenRepository.GetTokenByValue(value);
+                if (DateTime.Compare(tokenDTO.ExpirationDate, DateTime.Now) >= 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    _tokenRepository.RemoveTokenById(tokenDTO.TokenId);
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthenticationToken", tokenDTO.AccessToken, new CookieOptions { Expires = DateTime.Now.AddDays(-1) });
+                }
+
+
+            }
+            return false;
+        }
+        public string GetCurentUserFullName()
+        {
+            string value = _httpContextAccessor.HttpContext.Request.Cookies["AuthenticationToken"];
+            if (!string.IsNullOrEmpty(value))
+            {
+                TokenDTO tokenDTO = _tokenRepository.GetTokenByValue(value);
+                if (tokenDTO == null)
+                {
+                    return null;
+                }
+                if (DateTime.Compare(tokenDTO.ExpirationDate, DateTime.Now) >= 0)
+                {
+                    return _userLogic.GetFullName(tokenDTO.UserId);
+                }
+                else
+                {
+                    _tokenRepository.RemoveTokenById(tokenDTO.TokenId);
+                    _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthenticationToken", tokenDTO.AccessToken, new CookieOptions { Expires = DateTime.Now.AddDays(-1) });
+                }
+            }
+            return null;
+        }
+        public string EncryptPassword(string password)
+        {
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(password);
+            data = new System.Security.Cryptography.SHA256Managed().ComputeHash(data);
+            string hash = System.Text.Encoding.ASCII.GetString(data);
+            return hash;
+        }
+
+        public void AddToken(TokenDTO tokenDTO)
+        {
+            _tokenRepository.AddToken(tokenDTO);
+        }
+        public void RemoveAllTokensByUserId(int userId)
+        {
+            _tokenRepository.RemoveAllTokensByUserId(userId);
+        }
+
+        public void Logout()
+        {
+            string value = _httpContextAccessor.HttpContext.Request.Cookies["AuthenticationToken"];
+            if (!string.IsNullOrEmpty(value))
+            {
+                TokenDTO tokenDTO = _tokenRepository.GetTokenByValue(value);
+                if (tokenDTO == null)
+                {
+                    return;
+                }
+                _tokenRepository.RemoveAllTokensByUserId(tokenDTO.UserId);
+                _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthenticationToken", tokenDTO.AccessToken, new CookieOptions { Expires = DateTime.Now.AddDays(-1) });
+            }
+        }
+
+    }
+}

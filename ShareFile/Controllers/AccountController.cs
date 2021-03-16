@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ShareFile.BL.Logic.Interfaces;
 using ShareFile.Helpers.Interfaces;
 using ShareFile.Models;
+using ShareFile.TL.DTO;
+using ShareFile.TL.Helpers;
+using System;
 
 namespace ShareFile.Controllers
 {
@@ -9,10 +13,12 @@ namespace ShareFile.Controllers
     {
         private readonly IUserLogic _userLogic;
         private readonly IAccountControllerHelper _accountControllerHelper;
-        public AccountController(IUserLogic userLogic, IAccountControllerHelper accountControllerHelper)
+        private readonly IAccountLogic _accountLogic;
+        public AccountController(IUserLogic userLogic, IAccountControllerHelper accountControllerHelper, IAccountLogic accountLogic)
         {
             _userLogic = userLogic;
             _accountControllerHelper = accountControllerHelper;
+            _accountLogic = accountLogic;
         }
         [HttpGet]
         public IActionResult Register()
@@ -24,8 +30,41 @@ namespace ShareFile.Controllers
         {
             if (registerViewModel != null)
             {
-                TL.Helpers.Response message = _userLogic.AddUser(_accountControllerHelper.BuildDTO(registerViewModel), registerViewModel.RePassword);
+                registerViewModel.Password = _accountLogic.EncryptPassword(registerViewModel.Password);
+                registerViewModel.RePassword = _accountLogic.EncryptPassword(registerViewModel.RePassword);
+                Response message = _userLogic.AddUser(_accountControllerHelper.BuildDTO(registerViewModel), registerViewModel.RePassword);
             }
+            return RedirectToAction("Index", "Share");
+        }
+        [HttpPost]
+        public IActionResult Login([FromBody] LoginViewModel loginViewModel)
+        {
+            if (string.IsNullOrEmpty(loginViewModel.Email) && string.IsNullOrEmpty(loginViewModel.Password))
+            {
+                return Unauthorized();
+            }
+            ShareFileUserDTO userByEmail = _userLogic.GetUserByEmail(loginViewModel.Email);
+            if (userByEmail != null && userByEmail.Password.Equals(_accountLogic.EncryptPassword(loginViewModel.Password)))
+            {
+                int minutesToExpire = loginViewModel.RememberMe ? 1440 : 60;
+                DateTime expirationDate = DateTime.Now.AddMinutes(minutesToExpire);
+                Guid token = Guid.NewGuid();
+                _accountLogic.AddToken(new TokenDTO
+                {
+                    AccessToken = token.ToString(),
+                    ExpirationDate = expirationDate,
+                    UserId = userByEmail.UserId
+                });
+                HttpContext.Response.Cookies.Append("AuthenticationToken", token.ToString(), new CookieOptions { Expires = expirationDate });
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        public IActionResult Logout()
+        {
+            _accountLogic.Logout();
             return RedirectToAction("Index", "Share");
         }
 

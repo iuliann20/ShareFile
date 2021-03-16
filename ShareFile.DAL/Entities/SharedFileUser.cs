@@ -15,6 +15,8 @@ namespace ShareFile.DAL.Entities
         public string PhoneNumber { get; set; }
         public string Password { get; set; }
         public virtual ICollection<SharedFile> SharedFiles { get; set; }
+        public virtual ICollection<Token> AccessTokens { get; set; }
+
 
 
 

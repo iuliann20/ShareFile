@@ -25,30 +25,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Share" asp-action="Files">Files</a>
                         </li>
-                        <li class="login-li-button nav-item float-right">
-                            <a id="login-trigger" class="nav-link text-dark" href="#">
-                                Login/Register <span>▼</span>
-                            </a>
-                            <div id="login-content">
-                                <form>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="Email" aria-label="Email" aria-describedby="basic-addon1">
-                                    </div>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
-                                    </div>
-                                    <label class="mr-3 ml-1">
-                                        <input type="checkbox">
-                                        Keep me signed in
-                                    </label>
-                                    <button class="btn btn-primary" type="submit">
-                                        Login
-                                    </button>
-                                    <a class="btn btn-success cursor-pointer" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
-
-                                </form>
-                            </div>
-                        </li>
+                        <partial name="_LoginPartial" />
                     </ul>
                 </div>
             </div>
@@ -68,17 +45,11 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/login.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#login-trigger').click(function () {
-                $(this).next('#login-content').slideToggle();
-                $(this).toggleClass('active');
-
-                if ($(this).hasClass('active')) $(this).find('span').html('&#x25B2;')
-                else $(this).find('span').html('&#x25BC;')
-            })
-        });
+        Login_Module.Init();
     </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

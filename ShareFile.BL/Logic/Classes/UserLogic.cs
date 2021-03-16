@@ -38,5 +38,15 @@ namespace ShareFile.BL.Logic.Classes
                 ResponseMessage = "User added succesfuly!"
             };
         }
+        public ShareFileUserDTO GetUserByEmail(string email)
+        {
+            return _userRepository.GetUserByEmail(email);
+        }
+        public string GetFullName(int id)
+        {
+            ShareFileUserDTO userDTO = _userRepository.GetUserById(id);
+            return $"{userDTO.FirstName} {userDTO.LastName}";
+        }
+
     }
 }

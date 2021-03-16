@@ -32,13 +32,16 @@ namespace ShareFile
 
             services.AddTransient<IFileRepository, FileRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ITokenRepository, TokenRepository>();
 
             services.AddTransient<IFileLogic, FileLogic>();
             services.AddTransient<IUserLogic, UserLogic>();
+            services.AddTransient<IAccountLogic, AccountLogic>();
+
 
             services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
             services.AddTransient<IAccountControllerHelper, AccountControllerHelper>();
-
+            services.AddHttpContextAccessor();
             services.AddControllersWithViews();
 
         }

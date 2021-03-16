@@ -88,6 +88,10 @@ nav #login {
     margin-left: 76%;
 }
 
+.fullname-li-button {
+    margin-left: 50%;
+}
+
 nav #login-content {
     display: none;
     position: absolute;
@@ -105,4 +109,8 @@ nav #login-content {
 nav li #login-content {
     right: 0;
     width: 250px;
+}
+
+.error {
+    color: #ff0000;
 }
