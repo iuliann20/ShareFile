@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using ShareFile.BL.Logic.Classes;
 using ShareFile.BL.Logic.Interfaces;
 using ShareFile.DAL;
@@ -11,6 +12,9 @@ using ShareFile.DAL.Repository.Classes;
 using ShareFile.DAL.Repository.Interfaces;
 using ShareFile.Helpers.Classes;
 using ShareFile.Helpers.Interfaces;
+using ShareFile.Middlewares;
+using System.IO;
+
 
 namespace ShareFile
 {
@@ -28,6 +32,7 @@ namespace ShareFile
         {
 
             string connectionString = "Server=localhost;Database=ShareFileDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+
             services.AddDbContext<ShareFileDbContext>(options => options.UseSqlServer(connectionString));
 
             services.AddTransient<IFileRepository, FileRepository>();
@@ -37,6 +42,7 @@ namespace ShareFile
             services.AddTransient<IFileLogic, FileLogic>();
             services.AddTransient<IUserLogic, UserLogic>();
             services.AddTransient<IAccountLogic, AccountLogic>();
+            services.AddTransient<ITokenLogic, TokenLogic>();
 
 
             services.AddTransient<IShareControllerHelper, ShareControllerHelper>();
@@ -47,8 +53,10 @@ namespace ShareFile
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            string path = Directory.GetCurrentDirectory();
+            loggerFactory.AddFile($"{path}\\Logs\\Log.txt");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,6 +73,7 @@ namespace ShareFile
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseMiddleware<TokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

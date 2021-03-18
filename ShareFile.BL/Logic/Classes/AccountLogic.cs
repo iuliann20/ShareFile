@@ -24,17 +24,14 @@ namespace ShareFile.BL.Logic.Classes
             if (!string.IsNullOrEmpty(value))
             {
                 TokenDTO tokenDTO = _tokenRepository.GetTokenByValue(value);
+                if (tokenDTO == null)
+                {
+                    return false;
+                }
                 if (DateTime.Compare(tokenDTO.ExpirationDate, DateTime.Now) >= 0)
                 {
                     return true;
                 }
-                else
-                {
-                    _tokenRepository.RemoveTokenById(tokenDTO.TokenId);
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthenticationToken", tokenDTO.AccessToken, new CookieOptions { Expires = DateTime.Now.AddDays(-1) });
-                }
-
-
             }
             return false;
         }
@@ -52,13 +49,26 @@ namespace ShareFile.BL.Logic.Classes
                 {
                     return _userLogic.GetFullName(tokenDTO.UserId);
                 }
-                else
-                {
-                    _tokenRepository.RemoveTokenById(tokenDTO.TokenId);
-                    _httpContextAccessor.HttpContext.Response.Cookies.Append("AuthenticationToken", tokenDTO.AccessToken, new CookieOptions { Expires = DateTime.Now.AddDays(-1) });
-                }
             }
             return null;
+        }
+
+        public int GetCurentUserById()
+        {
+            string value = _httpContextAccessor.HttpContext.Request.Cookies["AuthenticationToken"];
+            if (!string.IsNullOrEmpty(value))
+            {
+                TokenDTO tokenDTO = _tokenRepository.GetTokenByValue(value);
+                if (tokenDTO == null)
+                {
+                    return 0;
+                }
+                if (DateTime.Compare(tokenDTO.ExpirationDate, DateTime.Now) >= 0)
+                {
+                    return tokenDTO.UserId;
+                }
+            }
+            return 0;
         }
         public string EncryptPassword(string password)
         {

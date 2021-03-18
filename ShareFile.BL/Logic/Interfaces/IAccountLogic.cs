@@ -10,5 +10,6 @@ namespace ShareFile.BL.Logic.Interfaces
         void AddToken(TokenDTO tokenDTO);
         void RemoveAllTokensByUserId(int userId);
         void Logout();
+        int GetCurentUserById();
     }
 }

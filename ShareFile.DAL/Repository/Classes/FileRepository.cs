@@ -19,6 +19,7 @@ namespace ShareFile.DAL.Repository.Classes
         {
             _shareFileDbContext.Files.Add(new SharedFile
             {
+                UserId= sharedFileDTO.UserId,
                 FileName = sharedFileDTO.FileName,
                 FileSize = sharedFileDTO.FileSize,
                 UploadDate = sharedFileDTO.UploadDate
@@ -44,7 +45,6 @@ namespace ShareFile.DAL.Repository.Classes
                 fileFromDb.FileName = !string.IsNullOrEmpty(sharedFileDTO.FileName) ? sharedFileDTO.FileName : fileFromDb.FileName;
                 fileFromDb.FileSize = !string.IsNullOrEmpty(sharedFileDTO.FileSize) ? sharedFileDTO.FileSize : fileFromDb.FileSize;
                 fileFromDb.UploadDate = sharedFileDTO.UploadDate != null ? sharedFileDTO.UploadDate : fileFromDb.UploadDate;
-
                 _shareFileDbContext.SaveChanges();
             }
         }
@@ -59,6 +59,18 @@ namespace ShareFile.DAL.Repository.Classes
                   UploadDate = file.UploadDate
               }).ToList();
 
+        }
+
+        public List<SharedFileDTO> GetAllFilesByUserId(int id)
+        {
+            return _shareFileDbContext.Files.Where(x => x.UserId == id)
+              .Select(file => new SharedFileDTO
+              {
+                  Id = file.Id,
+                  FileName = file.FileName,
+                  FileSize = file.FileSize,
+                  UploadDate = file.UploadDate
+              }).ToList();
         }
 
         public SharedFileDTO GetFileById(int id)

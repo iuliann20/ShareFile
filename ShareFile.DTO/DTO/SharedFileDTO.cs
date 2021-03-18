@@ -8,5 +8,6 @@ namespace ShareFile.TL.DTO
         public string FileName { get; set; }
         public string FileSize { get; set; }
         public DateTime? UploadDate { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -102,6 +102,10 @@ namespace ShareFile.BL.Logic.Classes
             UploadFileOnDiskAsync(uploads, file, fileName);
 
         }
+        public List<SharedFileDTO> GetAllFilesByUserId(int id)
+        {
+            return _fileRepository.GetAllFilesByUserId(id);
+        }
 
 
         private string IncrementFileName(string fileName)

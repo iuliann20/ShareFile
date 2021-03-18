@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using ShareFile.BL.Logic.Interfaces
+@inject IAccountLogic AccountLogic
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -22,7 +24,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Share" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" asp-conditional for-condition="@AccountLogic.IsSignedIn()">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Share" asp-action="Files">Files</a>
                         </li>
                         <partial name="_LoginPartial" />

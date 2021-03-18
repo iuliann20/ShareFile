@@ -20,13 +20,15 @@ namespace ShareFile.Controllers
         private readonly IFileLogic _fileLogic;
         private readonly IShareControllerHelper _shareControllerHelper;
         private readonly string _uploads;
+        private readonly IAccountLogic _accountLogic;
 
-        public ShareController(IFileLogic fileLogic, IShareControllerHelper shareControllerHelper, IWebHostEnvironment hostingEnvironment)
+        public ShareController(IFileLogic fileLogic, IShareControllerHelper shareControllerHelper, IWebHostEnvironment hostingEnvironment, IAccountLogic accountLogic)
         {
             _fileLogic = fileLogic;
             _shareControllerHelper = shareControllerHelper;
             _hostingEnvironment = hostingEnvironment;
             _uploads = Path.Combine(_hostingEnvironment.WebRootPath, "Uploads");
+            _accountLogic = accountLogic;
         }
 
         public IActionResult Index()
@@ -35,7 +37,7 @@ namespace ShareFile.Controllers
         }
         public IActionResult Files()
         {
-            List<SharedFileViewModel> fileViewModels = _shareControllerHelper.BuildViewModel(_fileLogic.GetAllFiles());
+            List<SharedFileViewModel> fileViewModels = _shareControllerHelper.BuildViewModel(_fileLogic.GetAllFilesByUserId(_accountLogic.GetCurentUserById()));
             return View(fileViewModels);
         }
         public IActionResult Delete(int id)
@@ -58,7 +60,7 @@ namespace ShareFile.Controllers
 
                 string newFileName = _fileLogic.AddFile(new SharedFileDTO
                 {
-
+                    UserId = _accountLogic.GetCurentUserById(),
                     FileName = file.FileName,
                     FileSize = _shareControllerHelper.FormatSize(file.Length),
                     UploadDate = DateTime.Now
@@ -95,7 +97,8 @@ namespace ShareFile.Controllers
                 Id = fileId,
                 FileName = file.FileName,
                 FileSize = _shareControllerHelper.FormatSize(file.Length),
-                UploadDate = DateTime.Now
+                UploadDate = DateTime.Now,
+                UserId= _accountLogic.GetCurentUserById()
             }, !hasNameChanged);
 
             _fileLogic.ReplaceFileOnDisk(file, _uploads, !hasNameChanged, newFileName);
